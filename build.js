@@ -3772,8 +3772,35 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
   for (let i2 = 0; i2 < 100; i2++) {
     loadSprite(`tile${i2}`, `sprites/Dungeon_Tileset/tile${"0".repeat(3 - `${i2}`.length)}${i2}.png`);
   }
-  var SCREEN_WIDTH = 16 * 16;
-  var SCREEN_HEIGHT = 8 * 16;
+  loadSprite("thing_tileset", "sprites/Things_Tileset.png", {
+    sliceX: 21 * 4,
+    sliceY: 1,
+    anims: {
+      box1: { from: 0, to: 3 },
+      box2: { from: 4, to: 7 },
+      candlestick1: { from: 8, to: 11 },
+      candlestick2: { from: 12, to: 15 },
+      chest: { from: 16, to: 19 },
+      chest_open: { from: 20, to: 23 },
+      coin: { from: 24, to: 27 },
+      flag: { from: 28, to: 31 },
+      flask1: { from: 32, to: 35 },
+      flask2: { from: 36, to: 39 },
+      flask3: { from: 40, to: 43 },
+      flask4: { from: 44, to: 47 },
+      key1: { from: 48, to: 51 },
+      key2: { from: 52, to: 55 },
+      minibox1: { from: 56, to: 59 },
+      minibox2: { from: 60, to: 63 },
+      minichest: { from: 64, to: 67 },
+      minichest_open: { from: 68, to: 71 },
+      peaks: { from: 72, to: 75 },
+      side_torch: { from: 76, to: 79 },
+      torch: { from: 80, to: 83 }
+    }
+  });
+  var SCREEN_WIDTH = (16 + 1) * 16;
+  var SCREEN_HEIGHT = (8 + 0.5) * 16;
   setBackground(BLACK);
   var w = width() / SCREEN_WIDTH;
   var h = height() / SCREEN_HEIGHT;
@@ -3799,7 +3826,7 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
   }
   var selected_player = 0;
   var player = add([
-    sprite("player_tileset", {
+    sprite("thing_tileset", {
       animSpeed: 1,
       frame: 4
     }),
@@ -3809,7 +3836,7 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
   ]);
   player.onMousePress((m) => selected_player++);
   setInterval(() => {
-    player.play(["priest1", "priest2", "priest3", "skeleton2", "skeleton1", "skull", "vampire"][selected_player]);
+    player.play(["box1", "box2", "candlestick1", "candlestick2", "chest", "chest_open", "coin", "flag", "flask1", "flask2", "flask3", "flask4", "key1", "key2", "minibox1", "minibox2", "minichest", "minichest_open", "peaks", "side_torch", "torch"][selected_player]);
   }, 500);
   copyright();
   var wall = [scale(1.0625), "wall"];
@@ -3835,16 +3862,46 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     "\u25E2": (p) => ground.concat(posify(p.x, p.y), sprite("tile34")),
     ".": (p) => nothing.concat(posify(p.x, p.y), sprite("tile78"))
   };
-  var levelsMaps = {
-    "leftleft1": [
+  var level1Maps = {
+    "leftleft": [
       "................",
       "................",
-      "AAAAAAAAA\u2197......",
-      "^^^^^^^^\u25E5]......",
-      "vvvvvvvv\u25E2]......",
-      "VVVVVVVVV\u2198......",
+      "AAAAAAAAAA\u2197.....",
+      "^^^^^^^^^\u25E5].....",
+      "vvvvvvvvv\u25E2].....",
+      "VVVVVVVVVV\u2198.....",
       "................",
       "................"
+    ],
+    "rightright": [
+      "................",
+      "................",
+      ".....\u2196AAAAAAAAAA",
+      ".....[\u25E4^^^^^^^^^",
+      ".....[\u25E3vvvvvvvvv",
+      ".....\u2199VVVVVVVVVV",
+      "................",
+      "................"
+    ],
+    "toptop": [
+      "......[()]......",
+      "......[()]......",
+      "......[()]......",
+      "......[()]......",
+      "......[\u25E3\u25E2]......",
+      "......\u2199VV\u2198......",
+      "................",
+      "................"
+    ],
+    "bottombottom": [
+      "................",
+      "................",
+      "......\u2196AA\u2197......",
+      "......[\u25E4\u25E5]......",
+      "......[()]......",
+      "......[()]......",
+      "......[()]......",
+      "......[()]......"
     ]
   };
   var level1 = addLevel(
@@ -3858,7 +3915,7 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     // "................",
     // "................",
     // ]
-    levelsMaps["leftleft1"],
+    level1Maps["bottombottom"],
     {
       tileHeight: 16,
       tileWidth: 16,
