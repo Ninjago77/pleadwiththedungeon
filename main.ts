@@ -19,38 +19,8 @@ loadSprite("player_tileset", "sprites/Players_Idle.png",{
 });
 
 for (let i = 0; i < 100; i++) {
-    loadSprite(`tile${i}`,`sprites/Dungeon_Tileset/tile0${i}`);
+    loadSprite(`tile${i}`,`sprites/Dungeon_Tileset/tile${"0".repeat(3-`${i}`.length)}${i}.png`);
 }
-
-
-
-var wall: any[] = [area(),"wall"];
-
-const level1 = addLevel([
-    "↖^↗             ",
-    "[#]             ",
-    "↙v↘             ",
-    "                ",
-    "                ",
-    "                ",
-    "                ",
-    "                ",
-],{
-    tileHeight: 16,
-    tileWidth: 16,
-    tiles: {
-        "↖": () => wall.concat(sprite("tile00")),
-        "^": () => wall.concat(sprite("tile02")),
-        "↗": () => wall.concat(sprite("tile05")),
-        "[": () => wall.concat(sprite("tile10")),
-        "#": () => wall.concat(sprite("tile18")),
-        "]": () => wall.concat(sprite("tile15")),
-        "↙": () => wall.concat(sprite("tile40")),
-        "v": () => wall.concat(sprite("tile41")),
-        "↘": () => wall.concat(sprite("tile45")),
-    }
-
-})
 
 
 // loadSound("win","https://raw.githubusercontent.com/Ninjago77/pleadwiththedungeon/main/sounds/winner.mp3");
@@ -62,12 +32,17 @@ const SCREEN_HEIGHT = 8*16;// 700;
 setBackground(BLACK);
 const w = width() / SCREEN_WIDTH;
 const h = height() / SCREEN_HEIGHT;
-camScale(new Vec2(Math.min(h, w),Math.min(h, w)));
+camScale(new Vec2(w,h));
 camPos(width() / 2, height() / 2);
 
 function posify(x: number, y: number) {
-    // return pos(x,y)
-    return pos(x + ((Math.max(width(),SCREEN_WIDTH) - Math.min(width(),SCREEN_WIDTH)) / 2), y + ((Math.max(height(),SCREEN_HEIGHT) - Math.min(height(),SCREEN_HEIGHT)) / 2))
+    const offsetX = (width() - SCREEN_WIDTH) / 2;
+    const offsetY = (height() - SCREEN_HEIGHT) / 2;
+    return pos(x + offsetX, y + offsetY);
+  }
+
+function random_choice(arr:Array<any>) {
+    return arr[Math.floor(Math.random() * arr.length)];
 }
 
 function copyright() {
@@ -105,3 +80,60 @@ player.onMousePress((m) => selected_player++);
 setInterval(() => {player.play(["priest1","priest2","priest3","skeleton2","skeleton1","skull","vampire"][selected_player]);}, 500);
 copyright();
 
+
+var wall: any[] = [scale(1.0625),"wall"];
+var ground: any[] = [scale(1.0625),"ground"];
+var nothing: any[] = [scale(1.0625),"nothing"];
+const wallCFG = {
+    "↖": (p) => wall.concat(posify(p.x,p.y),sprite("tile0")),
+    "A": (p) => wall.concat(posify(p.x,p.y),sprite(random_choice(["tile1","tile2","tile3","tile4"]))),
+    "↗": (p) => wall.concat(posify(p.x,p.y),sprite("tile5")),
+    "[": (p) => wall.concat(posify(p.x,p.y),sprite(random_choice(["tile10","tile20","tile30"]))),
+    "#": (p) => ground.concat(posify(p.x,p.y),sprite(random_choice(["tile6","tile7","tile8","tile9","tile16","tile17","tile18","tile19","tile26","tile27","tile28","tile29"]))),
+    "]": (p) => wall.concat(posify(p.x,p.y),sprite(random_choice(["tile15","tile25","tile35"]))),
+    "↙": (p) => wall.concat(posify(p.x,p.y),sprite("tile40")),
+    "V": (p) => wall.concat(posify(p.x,p.y),sprite(random_choice(["tile41","tile42","tile43","tile44"]))),
+    "↘": (p) => wall.concat(posify(p.x,p.y),sprite("tile45")),
+
+    "◤": (p) => ground.concat(posify(p.x,p.y),sprite("tile11")),
+    "^": (p) => ground.concat(posify(p.x,p.y),sprite(random_choice(["tile12","tile13"]))),
+    "◥": (p) => ground.concat(posify(p.x,p.y),sprite("tile14")),
+    "(": (p) => ground.concat(posify(p.x,p.y),sprite("tile21")),
+    ")": (p) => ground.concat(posify(p.x,p.y),sprite("tile24")),
+    "◣": (p) => ground.concat(posify(p.x,p.y),sprite("tile31")),
+    "v": (p) => ground.concat(posify(p.x,p.y),sprite(random_choice(["tile32","tile33"]))),
+    "◢": (p) => ground.concat(posify(p.x,p.y),sprite("tile34")),
+
+    ".": (p) => nothing.concat(posify(p.x,p.y),sprite("tile78")),
+};
+const levelsMaps = {
+    "leftleft1": [
+        "................",
+        "................",
+        "AAAAAAAAA↗......",
+        "^^^^^^^^◥]......",
+        "vvvvvvvv◢]......",
+        "VVVVVVVVV↘......",
+        "................",
+        "................",
+    ],
+}
+
+const level1 = addLevel(
+// [
+// "↖AAA↗...........",
+// "[◤^◥]...........",
+// "[(#)]............",
+// "[◣v◢]...........",
+// "↙VVV↘...........",
+// "................",
+// "................",
+// "................",
+// ]
+levelsMaps["leftleft1"]
+,{
+    tileHeight: 16,
+    tileWidth: 16,
+    tiles: wallCFG,
+
+})

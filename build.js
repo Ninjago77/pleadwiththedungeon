@@ -3770,42 +3770,22 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     }
   });
   for (let i2 = 0; i2 < 100; i2++) {
-    loadSprite(`tile${i2}`, `sprites/Dungeon_Tileset/tile0${i2}`);
+    loadSprite(`tile${i2}`, `sprites/Dungeon_Tileset/tile${"0".repeat(3 - `${i2}`.length)}${i2}.png`);
   }
-  var wall = [area(), "wall"];
-  var level1 = addLevel([
-    "\u2196^\u2197             ",
-    "[#]             ",
-    "\u2199v\u2198             ",
-    "                ",
-    "                ",
-    "                ",
-    "                ",
-    "                "
-  ], {
-    tileHeight: 16,
-    tileWidth: 16,
-    tiles: {
-      "\u2196": () => wall.concat(sprite("tile00")),
-      "^": () => wall.concat(sprite("tile02")),
-      "\u2197": () => wall.concat(sprite("tile05")),
-      "[": () => wall.concat(sprite("tile10")),
-      "#": () => wall.concat(sprite("tile18")),
-      "]": () => wall.concat(sprite("tile15")),
-      "\u2199": () => wall.concat(sprite("tile40")),
-      "v": () => wall.concat(sprite("tile41")),
-      "\u2198": () => wall.concat(sprite("tile45"))
-    }
-  });
   var SCREEN_WIDTH = 16 * 16;
   var SCREEN_HEIGHT = 8 * 16;
   setBackground(BLACK);
   var w = width() / SCREEN_WIDTH;
   var h = height() / SCREEN_HEIGHT;
-  camScale(new Vec2(Math.min(h, w), Math.min(h, w)));
+  camScale(new Vec2(w, h));
   camPos(width() / 2, height() / 2);
   function posify(x, y) {
-    return pos(x + (Math.max(width(), SCREEN_WIDTH) - Math.min(width(), SCREEN_WIDTH)) / 2, y + (Math.max(height(), SCREEN_HEIGHT) - Math.min(height(), SCREEN_HEIGHT)) / 2);
+    const offsetX = (width() - SCREEN_WIDTH) / 2;
+    const offsetY = (height() - SCREEN_HEIGHT) / 2;
+    return pos(x + offsetX, y + offsetY);
+  }
+  function random_choice(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
   }
   function copyright() {
     return add([
@@ -3832,4 +3812,57 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     player.play(["priest1", "priest2", "priest3", "skeleton2", "skeleton1", "skull", "vampire"][selected_player]);
   }, 500);
   copyright();
+  var wall = [scale(1.0625), "wall"];
+  var ground = [scale(1.0625), "ground"];
+  var nothing = [scale(1.0625), "nothing"];
+  var wallCFG = {
+    "\u2196": (p) => wall.concat(posify(p.x, p.y), sprite("tile0")),
+    "A": (p) => wall.concat(posify(p.x, p.y), sprite(random_choice(["tile1", "tile2", "tile3", "tile4"]))),
+    "\u2197": (p) => wall.concat(posify(p.x, p.y), sprite("tile5")),
+    "[": (p) => wall.concat(posify(p.x, p.y), sprite(random_choice(["tile10", "tile20", "tile30"]))),
+    "#": (p) => ground.concat(posify(p.x, p.y), sprite(random_choice(["tile6", "tile7", "tile8", "tile9", "tile16", "tile17", "tile18", "tile19", "tile26", "tile27", "tile28", "tile29"]))),
+    "]": (p) => wall.concat(posify(p.x, p.y), sprite(random_choice(["tile15", "tile25", "tile35"]))),
+    "\u2199": (p) => wall.concat(posify(p.x, p.y), sprite("tile40")),
+    "V": (p) => wall.concat(posify(p.x, p.y), sprite(random_choice(["tile41", "tile42", "tile43", "tile44"]))),
+    "\u2198": (p) => wall.concat(posify(p.x, p.y), sprite("tile45")),
+    "\u25E4": (p) => ground.concat(posify(p.x, p.y), sprite("tile11")),
+    "^": (p) => ground.concat(posify(p.x, p.y), sprite(random_choice(["tile12", "tile13"]))),
+    "\u25E5": (p) => ground.concat(posify(p.x, p.y), sprite("tile14")),
+    "(": (p) => ground.concat(posify(p.x, p.y), sprite("tile21")),
+    ")": (p) => ground.concat(posify(p.x, p.y), sprite("tile24")),
+    "\u25E3": (p) => ground.concat(posify(p.x, p.y), sprite("tile31")),
+    "v": (p) => ground.concat(posify(p.x, p.y), sprite(random_choice(["tile32", "tile33"]))),
+    "\u25E2": (p) => ground.concat(posify(p.x, p.y), sprite("tile34")),
+    ".": (p) => nothing.concat(posify(p.x, p.y), sprite("tile78"))
+  };
+  var levelsMaps = {
+    "leftleft1": [
+      "................",
+      "................",
+      "AAAAAAAAA\u2197......",
+      "^^^^^^^^\u25E5]......",
+      "vvvvvvvv\u25E2]......",
+      "VVVVVVVVV\u2198......",
+      "................",
+      "................"
+    ]
+  };
+  var level1 = addLevel(
+    // [
+    // "↖AAA↗...........",
+    // "[◤^◥]...........",
+    // "[(#)]............",
+    // "[◣v◢]...........",
+    // "↙VVV↘...........",
+    // "................",
+    // "................",
+    // "................",
+    // ]
+    levelsMaps["leftleft1"],
+    {
+      tileHeight: 16,
+      tileWidth: 16,
+      tiles: wallCFG
+    }
+  );
 })();

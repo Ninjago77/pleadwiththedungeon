@@ -1,0 +1,34 @@
+"↖" - Left Top Corner Wall;
+"A" - Top Wall;
+"↗" - Right Top Corner Wall;
+"[" - Left Side Wall;
+
+"]" - Right Side Wall;
+"↙" - Left Bottom Corner Wall;
+"V" - Bottom Wall;
+"↘" - Right Bottom Corner Wall;
+
+"◤" - Ground Diagnaly Touching Left Top Corner Wall;
+"^" - Ground Directly Touching Top Wall;
+"◥" - Ground Diagnaly Touching Right Top Corner Wall;
+"(" - Ground Directly Touching Left Side Wall;
+
+"#" - Ground Touching No Walls;
+
+")" - Ground Directly Touching Right Side Wall;
+"◣" - Ground Diagnaly Touching Left Bottom Corner Wall;
+"v" - Ground Directly Touching Bottom Wall;
+"◢" - Ground Diagnaly Touching Right Bottom Corner Wall;
+
+"." - Nothing (Not Ground & Not Wall);
+
+[
+    "↖AAA↗...........",
+    "[◤^◥]...........",
+    "[(#)]............",
+    "[◣v◢]...........",
+    "↙VVV↘...........",
+    "................",
+    "................",
+    "................",
+]
