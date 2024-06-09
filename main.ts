@@ -15,9 +15,42 @@ loadSprite("player_tileset", "sprites/Players_Idle.png",{
         skeleton1: {from: 16, to: 19},
         skull: {from: 20, to: 23},
         vampire: {from: 24, to: 27},
-
     },
 });
+
+for (let i = 0; i < 100; i++) {
+    loadSprite(`tile${i}`,`sprites/Dungeon_Tileset/tile0${i}`);
+}
+
+
+
+var wall: any[] = [area(),"wall"];
+
+const level1 = addLevel([
+    "↖^↗             ",
+    "[#]             ",
+    "↙v↘             ",
+    "                ",
+    "                ",
+    "                ",
+    "                ",
+    "                ",
+],{
+    tileHeight: 16,
+    tileWidth: 16,
+    tiles: {
+        "↖": () => wall.concat(sprite("tile00")),
+        "^": () => wall.concat(sprite("tile02")),
+        "↗": () => wall.concat(sprite("tile05")),
+        "[": () => wall.concat(sprite("tile10")),
+        "#": () => wall.concat(sprite("tile18")),
+        "]": () => wall.concat(sprite("tile15")),
+        "↙": () => wall.concat(sprite("tile40")),
+        "v": () => wall.concat(sprite("tile41")),
+        "↘": () => wall.concat(sprite("tile45")),
+    }
+
+})
 
 
 // loadSound("win","https://raw.githubusercontent.com/Ninjago77/pleadwiththedungeon/main/sounds/winner.mp3");
@@ -34,7 +67,7 @@ camPos(width() / 2, height() / 2);
 
 function posify(x: number, y: number) {
     // return pos(x,y)
-    return pos(x + ((width() - SCREEN_WIDTH) / 2), y + ((height() - SCREEN_HEIGHT) / 2))
+    return pos(x + ((Math.max(width(),SCREEN_WIDTH) - Math.min(width(),SCREEN_WIDTH)) / 2), y + ((Math.max(height(),SCREEN_HEIGHT) - Math.min(height(),SCREEN_HEIGHT)) / 2))
 }
 
 function copyright() {
@@ -57,17 +90,18 @@ function copyright() {
 //     }),
 //     anchor("center"),
 // ]);
+var selected_player = 0;
 const player = add([
     sprite("player_tileset", {
       animSpeed: 1,
-      frame: 1,
+      frame: 4,
     }),
-    posify(SCREEN_HEIGHT/2,SCREEN_WIDTH/2),
+    posify(SCREEN_WIDTH/2,SCREEN_HEIGHT/2),
     anchor("center"),
     scale(1),
 ]);
+player.onMousePress((m) => selected_player++);
 
-player.play("vampire");
-
+setInterval(() => {player.play(["priest1","priest2","priest3","skeleton2","skeleton1","skull","vampire"][selected_player]);}, 500);
 copyright();
 
