@@ -3755,6 +3755,48 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
 
   // main.ts
   zo({ font: "monospace" });
+  loadRoot("https://raw.githubusercontent.com/Ninjago77/pleadwiththedungeon/main/");
+  loadSprite("player_tileset", "sprites/Players_Idle.png", {
+    sliceX: 28,
+    sliceY: 1,
+    anims: {
+      priest1: { from: 0, to: 3 },
+      priest2: { from: 4, to: 7 },
+      priest3: { from: 8, to: 11 },
+      skeleton2: { from: 12, to: 15 },
+      skeleton1: { from: 16, to: 19 },
+      skull: { from: 20, to: 23 },
+      vampire: { from: 24, to: 27 }
+    }
+  });
+  for (let i2 = 0; i2 < 100; i2++) {
+    loadSprite(`tile${i2}`, `sprites/Dungeon_Tileset/tile0${i2}`);
+  }
+  var wall = [area(), "wall"];
+  var level1 = addLevel([
+    "\u2196^\u2197             ",
+    "[#]             ",
+    "\u2199v\u2198             ",
+    "                ",
+    "                ",
+    "                ",
+    "                ",
+    "                "
+  ], {
+    tileHeight: 16,
+    tileWidth: 16,
+    tiles: {
+      "\u2196": () => wall.concat(sprite("tile00")),
+      "^": () => wall.concat(sprite("tile02")),
+      "\u2197": () => wall.concat(sprite("tile05")),
+      "[": () => wall.concat(sprite("tile10")),
+      "#": () => wall.concat(sprite("tile18")),
+      "]": () => wall.concat(sprite("tile15")),
+      "\u2199": () => wall.concat(sprite("tile40")),
+      "v": () => wall.concat(sprite("tile41")),
+      "\u2198": () => wall.concat(sprite("tile45"))
+    }
+  });
   var SCREEN_WIDTH = 16 * 16;
   var SCREEN_HEIGHT = 8 * 16;
   setBackground(BLACK);
@@ -3763,7 +3805,7 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
   camScale(new Vec2(Math.min(h, w), Math.min(h, w)));
   camPos(width() / 2, height() / 2);
   function posify(x, y) {
-    return pos(x + (width() - SCREEN_WIDTH) / 2, y + (height() - SCREEN_HEIGHT) / 2);
+    return pos(x + (Math.max(width(), SCREEN_WIDTH) - Math.min(width(), SCREEN_WIDTH)) / 2, y + (Math.max(height(), SCREEN_HEIGHT) - Math.min(height(), SCREEN_HEIGHT)) / 2);
   }
   function copyright() {
     return add([
@@ -3775,13 +3817,19 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
       anchor("botright")
     ]);
   }
-  add([
-    posify(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
-    text("center", {
-      size: 16
-      // font: "sans-serif",
+  var selected_player = 0;
+  var player = add([
+    sprite("player_tileset", {
+      animSpeed: 1,
+      frame: 4
     }),
-    anchor("center")
+    posify(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+    anchor("center"),
+    scale(1)
   ]);
+  player.onMousePress((m) => selected_player++);
+  setInterval(() => {
+    player.play(["priest1", "priest2", "priest3", "skeleton2", "skeleton1", "skull", "vampire"][selected_player]);
+  }, 500);
   copyright();
 })();
