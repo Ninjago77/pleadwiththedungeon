@@ -392,7 +392,7 @@ scene("level0", () => {
         }),
         posify(SCREEN_WIDTH/2,SCREEN_HEIGHT*(2/3)),
         anchor("center"),
-        scale(1),
+        scale(15/16),
         area(),
         body({ isStatic: false}),
         "player",
